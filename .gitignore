@@ -1,0 +1,8 @@
+/.idea/
+/venv/
+/__pycache__/
+/params.py/
+/tenants_list.txt
+/tenants_list_subscribed_to_app.txt
+/params.py
+/tenants_list_to_subscribe_to_app.txt
