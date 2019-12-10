@@ -2,6 +2,7 @@ import requests
 import base64
 import json
 import params
+import time
 
 
 def show_tenants(url, headers):
@@ -192,6 +193,7 @@ def subscribe_tenants_list_to_app_id(url, headers):
     response = requests.get(url, headers=headers)
     response.raise_for_status()
     application_id = input("Provide application ID to subscribe: ")
+    timeout = float(input("Provide timeout between subscriptions in seconds default is 10 sec: ") or "10")
     if response.status_code == 200:
         try:
             with open('tenants_list_to_subscribe_to_app.txt', 'r') as f:
@@ -202,6 +204,7 @@ def subscribe_tenants_list_to_app_id(url, headers):
                     payload = ('{ "application": { "id" : "' + application_id + '"}}')
                     print(payload)
                     create_sub = requests.post(url, data=payload, headers=headers)
+                    time.sleep(timeout)
                     print('Server response {}'.format(create_sub.content) + '\n')
         except IOError:
             print("File not accessible or not present in catalog!")
@@ -223,7 +226,7 @@ def main():
               "5. Show all tenants subscribed to application with provided ID and create tenants_list_sub_app_id.txt "
               "file in script dir\n"
               "80. Subscribe to application with provided ID to tenants defined in "
-              "tenants_list_to_subscribe_to_app.txt\n "
+              "tenants_list_to_subscribe_to_app.txt\n"
               "99. Unsubscribe application with provided ID from tenants list defined in tenants_list_sub_app_id.txt\n"
               "0. To exit from a program\n")
         choice = input('Waiting for your choice > ')
