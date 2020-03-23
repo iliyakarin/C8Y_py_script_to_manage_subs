@@ -212,6 +212,26 @@ def subscribe_tenants_list_to_app_id(url, headers):
         print("Status: " + str(response.status_code) + " Message: " + str(response.content))
 
 
+def show_tenants_data_json(url, headers):
+    """
+    This function shows whole json for tenants url
+        Parameters:
+            url: (str) platform url + path to tenants list defined in params.py file
+            headers: (str) login and secret defined in params.py file and converted to base64 + apps json headers
+        Returns:
+            Json with all tenants data
+    """
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+
+    if response.status_code == 200:
+        response_list = json.loads(response.content)
+        full_info_tenants_list = (response_list['tenants'])
+        print(full_info_tenants_list)
+    else:
+        print("Status: " + str(response.status_code) + " Message: " + str(response.content))
+
+
 def main():
     print("\nThis script can show all applications on the platform with IDs, \n"
           "\n"
@@ -225,6 +245,7 @@ def main():
               "4. Show tenants subscribed to a specific application with the provided id\n"
               "5. Show all tenants subscribed to application with provided ID and create tenants_list_sub_app_id.txt "
               "file in script dir\n"
+              "6. Show all tenants data with JSON data\n"
               "80. Subscribe to application with provided ID to tenants defined in "
               "tenants_list_to_subscribe_to_app.txt\n"
               "99. Unsubscribe application with provided ID from tenants list defined in tenants_list_sub_app_id.txt\n"
@@ -240,6 +261,8 @@ def main():
             show_tenants_subscribed_to_app_id(tenants_url, user_headers)
         elif choice == '5':
             create_tenants_list_subscribed_to_app_id(tenants_url, user_headers)
+        elif choice == '6':
+            show_tenants_data_json(tenants_url, user_headers)
         elif choice == '80':
             subscribe_tenants_list_to_app_id(tenants_url, user_headers)
         elif choice == '99':
