@@ -189,6 +189,24 @@ def unsubscribe_tenants_list_from_app_id(url, headers):
         print("Status: " + str(response.status_code) + " Message: " + str(response.content))
 
 
+def unsubscribe_tenant_from_app_id(url, headers):
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+    application_id = input("Provide application ID to unsubscribe: ")
+    tenant_name = input("Provide tenant name to subscribe: ")
+    if response.status_code == 200:
+        try:
+            print('Unsubscribing application with ID ' + application_id + ' from tenant: ' + tenant_name)
+            url = (base_url + '/tenant/tenants/' + tenant_name + '/applications/' + application_id)
+            print(url)
+            delete_sub = requests.delete(url, headers=headers)
+            print('Server response {}'.format(delete_sub.content) + '\n')
+        finally:
+            print("Done !")
+    else:
+        print("Status: " + str(response.status_code) + " Message: " + str(response.content))
+
+
 def subscribe_tenants_list_to_app_id(url, headers):
     response = requests.get(url, headers=headers)
     response.raise_for_status()
@@ -208,6 +226,25 @@ def subscribe_tenants_list_to_app_id(url, headers):
                     print('Server response {}'.format(create_sub.content) + '\n')
         except IOError:
             print("File not accessible or not present in catalog!")
+    else:
+        print("Status: " + str(response.status_code) + " Message: " + str(response.content))
+
+
+def subscribe_tenant_to_app_id(url, headers):
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+    application_id = input("Provide application ID to subscribe: ")
+    tenant_name = input("Provide tenant name to subscribe: ")
+    if response.status_code == 200:
+        try:
+            print('Subscribing tenant ' + tenant_name + ' to application with ID ' + application_id)
+            url = (base_url + '/tenant/tenants/' + tenant_name + '/applications')
+            payload = ('{ "application": { "id" : "' + application_id + '"}}')
+            print(payload)
+            create_sub = requests.post(url, data=payload, headers=headers)
+            print('Server response {}'.format(create_sub.content) + '\n')
+        finally:
+            print('Done!')
     else:
         print("Status: " + str(response.status_code) + " Message: " + str(response.content))
 
@@ -248,6 +285,8 @@ def main():
               "6. Show all tenants data with JSON data\n"
               "80. Subscribe to application with provided ID to tenants defined in "
               "tenants_list_to_subscribe_to_app.txt\n"
+              "81. Subscribe tenant with provided name to application with provided ID.\n"
+              "98. Unsubscribe tenant with provided name from application with provided ID.\n"
               "99. Unsubscribe application with provided ID from tenants list defined in tenants_list_sub_app_id.txt\n"
               "0. To exit from a program\n")
         choice = input('Waiting for your choice > ')
@@ -265,8 +304,12 @@ def main():
             show_tenants_data_json(tenants_url, user_headers)
         elif choice == '80':
             subscribe_tenants_list_to_app_id(tenants_url, user_headers)
+        elif choice == '81':
+            subscribe_tenant_to_app_id(tenants_url, user_headers)
         elif choice == '99':
             unsubscribe_tenants_list_from_app_id(tenants_url, user_headers)
+        elif choice == '98':
+            unsubscribe_tenant_from_app_id(tenants_url, user_headers)
         elif choice == '0':
             print('Exiting...')
             exit()
